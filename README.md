@@ -29,7 +29,7 @@ geospatial-analysis-2021-houston-blackouts
 |   |   study_sites.shx       #shapefiles of Santa Clara River watershed study sites from [Dr. Christopher Kibler] (https://ckibler.com/) of the University of California, Santa Barbara 
 │
 └───figures/
-|   |   seasonal_ndvi.png       #timeseries of NDVI over time for all study sites
+|   |   seasonal_ndvi.png       #timeseries of monthly NDVI for all study sites
 |
 └───scripts/ 
 │   |   analyze_plant_phenology.Rmd file        #analysis markdown file
@@ -42,11 +42,11 @@ All the data used in the exercise are included in the repository. Descriptions o
 
 #### *Satellite Imagery*
 
-We utilize 8 pre-processed scenes of reflectance that were captured by the OLI sensor of the Landsat Operational Land Imager. The scenes include Level 2 surface reflectance products that contain bands 2-7. The scale factor was pre-set to 100 and erroneous values were set to NA. Each file includes the date the scene was taken as part of the filename.
+We utilized 8 pre-processed scenes of reflectance that were captured by the OLI sensor of the Landsat Operational Land Imager. The scenes include Level 2 surface reflectance products that contain bands 2-7. The scale factor was pre-set to 100 and erroneous values were set to NA. Each file includes the date the scene was taken as part of the filename.
 
 #### *Study sites*
 
-We utilize shapefile that depict 5 specific sites in the Santa Clara River watershed that were collected by Dr. Christopher Kibler from the University of California, Santa Barbara. The shapefile contains polygons that represent sites that are dominantly composed of one of the following vegetation types: chaparral shrubland, grassland, and riparian forest.
+We utilized a shapefile containing 5 specific sites in the Santa Clara River watershed, which were delineated by Dr. Christopher Kibler from the University of California, Santa Barbara. The shapefile contains polygons that represent sites that are dominantly composed of one of the following vegetation types: chaparral shrubland, grassland, and riparian forest.
 
 ### Results
 
