@@ -1,29 +1,41 @@
-# plant-phenology-santa-clara-river
+Phenology of three vegetation communities in the Santa Clara River watershed
 
+This repository contains an analysis of the phenology, or life cycle events, of three vegetation communities in the Santa Clara River watershed. In this analysis, we compute monthly NDVI values between June 2018 and July 2019 from Landsat satellite scenes. We then compare the monthly NDVI values
+across 5 study sites near the Santa Clara River that represent the following types of vegetation:
 
+-   riparian forest
 
+-   grasslands
 
-# Overview
-Phenology is the timing of life history events. Important phenological events for plants involve the growth of leaves, flowering, and senescence (death of leaves). Plants species adapt the timing of these events to local climate conditions to ensure successful reproduction. Subsequently, animal species often adapt their phenology to take advantage of food availability. As the climate shifts this synchronization is being thrown out of whack. Shifts in phenology are therefore a common yardstick of understanding how and if ecosystems are adjusting to climate change.\
+-   chaparral shrublands
 
-Plant species may employ the following phenological strategies:\
+The structure and contents of the repository are:
 
--   winter deciduous: lose leaves in the winter, grow new leaves in the spring\
--   drought deciduous: lose leaves in the summer when water is limited\
--   evergreen: maintain leaves yearround\
+    geospatial-analysis-2021-houston-blackouts
+    │   README.md                               
+    │
+    └───data/
+    |   │   landsat_20180612.tif      #6/12/2018 surface reflectance scene from OLI sensor of the [Landsat Operational Land Imager](https://landsat.gsfc.nasa.gov/satellites/landsat-8/spacecraft-instruments/operational-land-imager/)
+    |   │   landsat_20180815.tif      #8/15/2018 surface reflectance scene from OLI sensor of the [Landsat Operational Land Imager](https://landsat.gsfc.nasa.gov/satellites/landsat-8/spacecraft-instruments/operational-land-imager/)
+    |   │   landsat_20181018.tif      #10/18/2018 surface reflectance scene from OLI sensor of the [Landsat Operational Land Imager](https://landsat.gsfc.nasa.gov/satellites/landsat-8/spacecraft-instruments/operational-land-imager/)
+    |   │   landsat_20181103.tif      #11/3/2018 surface reflectance scene from OLI sensor of the [Landsat Operational Land Imager](https://landsat.gsfc.nasa.gov/satellites/landsat-8/spacecraft-instruments/operational-land-imager/)
+    |   │   landsat_20190122.tif      #1/22/2019 surface reflectance scene from OLI sensor of the [Landsat Operational Land Imager](https://landsat.gsfc.nasa.gov/satellites/landsat-8/spacecraft-instruments/operational-land-imager/)
+    |   │   landsat_20190223.tif      #2/23/2019 surface reflectance scene from OLI sensor of the [Landsat Operational Land Imager](https://landsat.gsfc.nasa.gov/satellites/landsat-8/spacecraft-instruments/operational-land-imager/)
+    |   │   landsat_20190412.tif      #04/12/2019 surface reflectance scene from OLI sensor of the [Landsat Operational Land Imager](https://landsat.gsfc.nasa.gov/satellites/landsat-8/spacecraft-instruments/operational-land-imager/)
+    |   │   landsat_20190701.tif      #7/1/2019 surface reflectance scene from OLI sensor of the [Landsat Operational Land Imager](https://landsat.gsfc.nasa.gov/satellites/landsat-8/spacecraft-instruments/operational-land-imager/)
+    |   |   study_sites.dbf       #shapefiles of Santa Clara River watershed study sites from [Dr. Christopher Kibler] (https://ckibler.com/) of the University of California, Santa Barbara 
+    |   |   study_sites.prj       #shapefiles of Santa Clara River watershed study sites from [Dr. Christopher Kibler] (https://ckibler.com/) of the University of California, Santa Barbara    
+    |   |   study_sites.shp       #shapefiles of Santa Clara River watershed study sites from [Dr. Christopher Kibler] (https://ckibler.com/) of the University of California, Santa Barbara 
+    |   |   study_sites.shx       #shapefiles of Santa Clara River watershed study sites from [Dr. Christopher Kibler] (https://ckibler.com/) of the University of California, Santa Barbara 
+    │
+    └───figures/
+    |   |   seasonal_ndvi.png       #timeseries of NDVI over time for all study sites
+    |
+    └───scripts/ 
+    │   |   analyze_plant_phenology.Rmd file        #analysis markdown file
+    │   │   analyze_plant_phenology.html file       #analysis HTML file
 
-credit: this lab is based on a materials developed by Chris Kibler.
-
-# Task
-In this lab we are analyzing plant phenology near the Santa Clara River which flows from Santa Clarita to Ventura. We will investigate the phenology of the following plant communities:\
-
--   riparian forests: grow along the river, dominated by winter deciduous cottonwood and willow trees\
--   grasslands: grow in openspaces, dominated by drought deciduous grasses\
--   chaparral shrublands: grow in more arid habitats, dominated by evergreen shrubs\
-
-To investigate the phenology of these plant communities we will a time series of Landsat imagery and polygons identifying the locations of study sites within each plant community.\
-
-## Data
+All the data used in the exercise are included in the repository. Descriptions of the original data sources are shown below: 
 
 **Landsat Operational Land Imager (OLI sensor)**\
 
@@ -39,13 +51,5 @@ To investigate the phenology of these plant communities we will a time series of
 -   polygons representing sites\
     - study_site: character string with plant type
     
-## Summary of approach
--   Convert spectral relfectance into a measure of vegetation productivity (NDVI)
--   Calulate NDVI throughout the year
--   Summarize NDVI values within vegetation communities
--   Visualize changes in NDVI within vegetation communities
-
-# Workflow
-
-
+A summary figure from the analysis is shown below:
 ![Alt Text](https://github.com/kristinart/plant-phenology-santa-clara-river/blob/main/figures/seasonal_ndvi.png)

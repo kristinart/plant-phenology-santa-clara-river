@@ -5,6 +5,9 @@ date: "2023-12-14"
 output:   
   html_document:
     code_folding: hide
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, echo = TRUE, message = FALSE, warning = FALSE}
@@ -24,27 +27,92 @@ rm(list = ls())
 ```
 
 ### Overview
-The purpose of this script is to compare seasonal cycles of plant productivity near the Santa Clara River. We use the normalized difference vegetation index (NDVI) as a proxy for plant productivity. The NDVI is calculated as:
 
-$$NDVI = \frac{NIR - Red}{NIR + Red}$$
-where: 
+The purpose of this script is to compare seasonal cycles of plant
+productivity near the Santa Clara River. We use the normalized
+difference vegetation index (NDVI) as a proxy for plant productivity.
+The NDVI is calculated as:
 
-- NIR is the amount of near-infrared reflectance
+$$NDVI = \frac{NIR - Red}{NIR + Red}$$ where:
 
-- Red is the amount of red reflectance
+-   NIR is the amount of near-infrared reflectance
 
-Leaf pigments (chlorophyll-*a*, chlorophyll-*b*, $\beta$-carotene, etc.) are the dominant factor that controls the amount of reflectance of red visible light while scattering in the spongey mesophyll is the dominant factor that controls the amount of reflectance of near-infrared light. The moisture content of leaves is the dominant factor that controls the amount of reflectance of middle-infrared light, but is not considered in the NDVI.
+-   Red is the amount of red reflectance
 
-In this exercise, we compute monthly NDVI values between June 2018 and July 2019 from Landsat satellite images. We compare the NDVI values across 5 study sites near the Santa Clara River that represent the following types of vegetation:
+Leaf pigments (chlorophyll-*a*, chlorophyll-*b*, $\beta$-carotene, etc.)
+are the dominant factor that controls the amount of reflectance of red
+visible light while scattering in the spongey mesophyll is the dominant
+factor that controls the amount of reflectance of near-infrared light.
+The moisture content of leaves is the dominant factor that controls the
+amount of reflectance of middle-infrared light, but is not considered in
+the NDVI.
 
-- riparian forest
+In this exercise, we compute monthly NDVI values between June 2018 and
+July 2019 from Landsat satellite images. We compare the NDVI values
+across 5 study sites near the Santa Clara River that represent the
+following types of vegetation:
 
-- grasslands
+-   riparian forest
 
-- chaparral shrublands
+-   grasslands
 
-We do so to understand the phenological cycles of plant communities near the Santa Clara River. 
+-   chaparral shrublands
 
+We do so to understand the phenological cycles of plant communities near
+the Santa Clara River.
+
+### Background
+
+The Santa Clara River watershed is located in southern California and is
+characterized by a Mediterranean climate; summers are warm/ hot and dry
+while winters are mild and wet. Higher elevation areas tend to
+experience slightly cooler temperatures and occasional heatwaves occur
+in the summers. The Santa Clara River watershed experiences a pronounced
+wet-dry seasonal pattern, with most of the annual precipitation occurs
+during the winter months (November to March); this leaves the area prone
+to periodic drought and wildfire during the dry summers.
+
+Native vegetation in the area includes chaparral, coastal sage scrub,
+oak woodlands, cottonwood trees, and willow trees. Each of these
+vegetation types have adapted the timing of their life cycle events, or
+phenology, to survive and reproduce in the local climate of the Santa
+Clara River watershed. For vegetation, key phenological events include
+growing leaves, flowering, senescing (leaves dying), and more. Plant
+species in the area can utilize one of the following phenological
+strategies:
+
+-   evergreen: maintain leaves year-round
+
+-   winter deciduous: lose leaves in the winter and grow new leaves in
+    the spring
+
+-   drought deciduous: lose leaves in the summer when water is limited
+
+Local animal species often adapt their own phenology to take advantage
+of the vegetation cycles. The timing of such events for both plants and
+animals is being altered as the climate shifts, which is why studying
+both plant and animal phenology can provide valuable insight into the
+health of an ecosystem.
+
+### Methods
+
+#### Data
+
+*Satellite Imagery* 
+
+We utilize 8 pre-processed scenes of reflectance
+that were captured by the OLI sensor of the Landsat Operational Land
+Imager. The scenes include Level 2 surface reflectance products that
+contain bands 2-7. The scale factor was pre-set to 100 and erroneous
+values were set to NA. Each file includes the date the scene was taken
+as part of the filename.
+
+*Study sites*
+
+We utilize shapefile that depict 5 specific sites in the Santa Clara River watershed that were collected by Dr. Christopher Kibler from the University of California, Santa Barbara. The shapefile contains polygons that represent sites that are dominantly composed of one of the following vegetation types: chaparral shrubland, grassland, and riparian forest. 
+
+#### Approach
+We began our analysis by converting raw reflectance data from 8 Landsat scenes into NDVI, a measure of vegetation productivity.
 
 ```{r load ndvi data}
 #define function to calculate NDVI 
@@ -53,9 +121,9 @@ calculate_ndvi <- function(nir, red){
 }
 
 #load and process ndvi data
-files <- list.files(here::here("data"), pattern = "*.tif", full.names = TRUE) 
+files <- list.files(here::here("data"), pattern = "*.tif", full.names = TRUE)
 
-# now we're passing our function a number that will correspond to the index in the list of file names
+#define function to load data and create ndvi layer
 create_ndvi_layer <- function(i){
   file <- files[i]
   landsat <- terra::rast(file)
@@ -94,6 +162,7 @@ all_ndvi
 
 ```
 
+Next, we calculated the NDVI at each of the 5 study sites for each monthly scene. The monthly values were calculated by finding the mean NDVI value of all raster cells included in each study site. 
 ```{r load sites}
 #load sites data
 sites <- st_read(here::here("data/study_sites.shp"))
@@ -114,6 +183,7 @@ sites_annotated <- cbind(sites, sites_ndvi)
 sites_annotated 
 ```
 
+Lastly, we visualized the NDVI results for each site.
 ```{r clean results}
 sites_clean <- sites_annotated %>% 
   st_drop_geometry() %>% 
@@ -142,178 +212,11 @@ ggsave("figures/seasonal_ndvi.png", ndvi_plot, width = 8, height = 6, units = "i
 
 ```
 
-The seasonal phenology of each vegetation
+We found that chaparral, riparian forest, and grassland vegetation communities all employ different phenological strategies (Figure 1). 
 
-- riparian forest
+Chaparral shrublands exhibited a relatively high and stable NDVI throughout the year, which indicates they utilize an evergreen strategy where they attain their leaves year-round; NDVI was slightly higher in the winter when water availability is higher, but the difference with the summer season is not drastic. 
 
-- grasslands
+Riparian forests exhibited distinctive seasonal dynamics in NDVI, with a higher NDVI in the summer relative to the winter. This indicates a winter deciduous phenology strategy where the vegetation (e.g., cottonwood and willow trees) lose their leaves in the winter and grow new leaves in the spring in response to changes in temperature, water availability, and light conditions.
 
-- chaparral shrublands
-#grassland ndvi low in summer, high in winter, low in next summer
-#summertime grass dries out and gets really brown here
-#chaparral shrubs keep their leaves all year round ndvi changes a little, a little lower in summer when dry and higher in winter with rain but NOT a huge change. v small difference. 
-#riparian forest. deciduous trees, sycamores high in summertime, low in winter time, creep back up in spring and then get high in sumemrtime again
-#grass around all the time, optimize dependson amount of water to get green again vs trees, which optimize for sunlight. 
-
-#we dont have many evergreen trees here, it's just chaparral shrubs for us here that are kinda evergreen
-
-
-
-
-
-
-
-
-
-###Not used
-
-
-### computing NDVI for a single scene
-We have 8 scenes collected by the Landsat OLI sensor on 8 different days throughout the year.
-Let's start by loading in the first scene collected on June 12, 2018
-```{r}
-landsat_20180612 <- rast(here::here("data/landsat_20180612.tif"))
-
-landsat_20180612
-#values are % reflectance. all values are between 0-100, so looks great.
-#layer names are not intuitive though. it's truncating the names of the bands so let's update
-```
-
-Now let's update the names of the layers to match the spectral bands they correspond to
-google landsat bands https://www.usgs.gov/faqs/what-are-band-designations-landsat-satellites 
-```{r}
-#shortwave infrared 1 and 2
-names(landsat_20180612) <- c("blue","green","red","NIR","SWIR1","SWIR2")
-
-landsat_20180612
-```
-
-note: image = scene. or multiple images = scene in remote sensing
-
-Now we can apply the NDVI function we created to compute NDVI for this scene using the `lapp()` function. The `lapp()` function applies a function to each cell using layers as arguments. Therefore, we need to tell `lapp()` which layers (or bands) to pass into the function. The NIR band is the 4th layer and the red band is the 3rd layer in our raster. In this case, because we defined the NIR band as the first argument and the red band as the second argument in our function, we tell `lapp()` to use the 4th layer first and 3rd layer second. 
-```{r}
-
-ndvi_20180612 <- lapp(landsat_20180612[[c(4,3)]], fun = ndvi_fun) #tell it to use bands nir and red in that order and the fxn
-
-ndvi_20180612 
-plot(ndvi_20180612)
-
-```
-
-
-### computing NDVI for all scenes - attempt 2
-
-The first attempt was pretty clunky and required a lot of copy/pasting. Because we're performing the same operations over and over again, this is a good opportunity to generalize our workflow into a function!
-
-#### starting from scratch
-Let's start over and see how we could do this more efficiently. We'll clear our environment and redefine our function for NDVI.
-```{r}
-rm(list = ls())
-here::i_am("Fall 2023/EDS 223/Week 8/week8-template.Rmd")
-
-ndvi_fun = function(nir, red){
-  (nir - red) / (nir + red)
-}
-```
-
-### create NDVI function
-Let's start by defining a function to compute the Normalized Difference Vegetation Index (NDVI). NDVI computes the difference in reflectance in the near infrared and red bands, normalized by their sum. 
-
-```{r ndvi-function}
-#define function to calculate NDVI 
-calculate_ndvi <- function(nir, red){
-   ndvi = (nir - red)/ (nir + red)
-}
-
-```
-
-
-#### outlining our function
-Let's first sketch out what operations we want to perform so we can figure out what our function needs.
-```{r eval=FALSE}
-
-# note: this code is not meant to run! we're just outlining the function we want to create
-create_ndvi_layer <- function(file){
-  landsat <- rast(file)
-  names(landsat) <- c("blue", "green", "red", "NIR", "SWIR1", "SWIR2")
-  ndvi <- lapp(landsat[[c(4,3)]], fun = ndvi_fun)
-  return(ndvi)
-}
-# what do we notice as what we need to pass into our function?
-
-```
-
-#### creating a list of files/scenes
-We want a list of the scenes so that we can tell our function to compute NDVI for each. To do that we look in our data folder for the relevant file.
-
-```{r}
-# here we're asking for the names of all the files in the week8 folder
-# the "pattern" option returns names that end in .tif (the file extension for the landsat scences)
-# the "full.names" option returns the full file path for each scene
-files <- list.files(here::here("data"), pattern = "*.tif") #SO COOL!
-files <- list.files(here::here("data"), pattern = "*.tif", full.names = TRUE) #SO COOL!
-
-
-```
-
-#### updating our function
-Now let's update our function to work with list of file names we created
-```{r}
-
-# now we're passing our function a number that will correspond to the index in the list of file names
-create_ndvi_layer <- function(i){
-  file <- files[i]
-  landsat <- rast(file)
-  names(landsat) <- c("blue", "green", "red", "NIR", "SWIR1", "SWIR2")
-  ndvi <- lapp(landsat[[c(4,3)]], fun = ndvi_fun)
-  return(ndvi)
-}
-
-
-
-# let's test our function by asking it to read in the first file 
-test <- create_ndvi_layer(1)
-test 
-```
-
-#### run function on all scenes!
-Now we can use our function to create a NDVI layer for each scene and stack them into a single rasterstack.
-```{r}
-# create NDVI layer for each scene (day) and stack into a single rasterstack
-#can create rasterstack using c operator
-all_ndvi <- c(create_ndvi_layer(1),
-              create_ndvi_layer(2),
-              create_ndvi_layer(3),
-              create_ndvi_layer(4),
-              create_ndvi_layer(5),
-              create_ndvi_layer(6),
-              create_ndvi_layer(7),
-              create_ndvi_layer(8)
-              )
-all_ndvi #successfully got raster stack with 8 layers
-# update layer names to match date
-names(all_ndvi) <- c("2018-06-12",
-                     "2018-08-15",
-                     "2018-10-18",
-                     "2018-11-03",
-                     "2019-01-22",
-                     "2019-02-23",
-                     "2019-04-12",
-                     "2019-07-01"
-                     )
-
-all_ndvi 
-```
-
-```{r}
-# %>% 
-#   mutate("year" = str_sub(name,2,5), #parse out year, which is between 2nd and 5th characters 
-#          "month" = str_sub(name,7,8), #parse out month, between 7th and 8th characters
-#          "day" = str_sub(name, -2, -1)) %>% #parse out day, between last and second to last characters  
-#   unite("date", 4:6, sep = "-") %>% #combine columns 4-6 of my dataframe and add a dash
-#   mutate("date" = lubridate::as_date(date)) %>% 
-#   select(-name)
-
-#could've used separator wherever there is a . into new columns using separate. and just get rid of the X to do it another way
-```
+Grasslands exhibited distinctive seasonal dynamics in NDVI as well, with a lower NDVI in the summer and a higher NDVI in the winter. This indicates a drought deciduous phenology strategy, where the vegetation loses its leaves in the summer when moisture availability is low. 
 
