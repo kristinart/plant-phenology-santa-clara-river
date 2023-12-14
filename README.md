@@ -1,9 +1,3 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
 # Phenology of three vegetation communities in the Santa Clara River watershed
 
 This repository contains an analysis of the phenology, or life cycle
