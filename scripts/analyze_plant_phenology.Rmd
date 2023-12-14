@@ -132,7 +132,7 @@ ndvi_plot <- ggplot()+
   labs(x = "", y = "Normalized Difference Vegetation Index (NDVI)", 
        col = "Vegetation Type",
        title = "Seasonal cycles of vegetation productivity near the Santa Clara River")+
-  theme_minimal()+
+  theme_bw()+
   theme(plot.title = element_text(size = 12, hjust = 0))
 
 ndvi_plot
