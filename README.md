@@ -1,11 +1,6 @@
 # Phenology of three vegetation communities in the Santa Clara River watershed
 
-This repository contains an analysis of the phenology, or life cycle
-events, of three vegetation communities in the Santa Clara River
-watershed. In this analysis, we compute monthly NDVI values between June
-2018 and July 2019 from Landsat satellite scenes. We then compare the
-monthly NDVI values across 5 study sites near the Santa Clara River that
-represent the following types of vegetation:
+This repository contains an analysis of the phenology, or life cycle events, of three vegetation communities in the Santa Clara River watershed. In this analysis, we compute monthly NDVI values between June 2018 and July 2019 from Landsat satellite scenes. We then compare the monthly NDVI values across 5 study sites near the Santa Clara River that represent the following types of vegetation:
 
 -   riparian forest
 
@@ -13,7 +8,7 @@ represent the following types of vegetation:
 
 -   chaparral shrublands
 
-The structure and contents of the repository are:
+The structure and contents of the repository are shown below:
 
 ```         
 geospatial-analysis-2021-houston-blackouts
@@ -43,27 +38,16 @@ geospatial-analysis-2021-houston-blackouts
 
 ### Data
 
-All the data used in the exercise are included in the repository.
-Descriptions of the original data sources are shown below:
+All the data used in the exercise are included in the repository. Descriptions of the original data sources are shown below:
 
 #### *Satellite Imagery*
 
-We utilize 8 pre-processed scenes of reflectance that were captured by
-the OLI sensor of the Landsat Operational Land Imager. The scenes
-include Level 2 surface reflectance products that contain bands 2-7. The
-scale factor was pre-set to 100 and erroneous values were set to NA.
-Each file includes the date the scene was taken as part of the filename.
+We utilize 8 pre-processed scenes of reflectance that were captured by the OLI sensor of the Landsat Operational Land Imager. The scenes include Level 2 surface reflectance products that contain bands 2-7. The scale factor was pre-set to 100 and erroneous values were set to NA. Each file includes the date the scene was taken as part of the filename.
 
 #### *Study sites*
 
-We utilize shapefile that depict 5 specific sites in the Santa Clara
-River watershed that were collected by Dr. Christopher Kibler from the
-University of California, Santa Barbara. The shapefile contains polygons
-that represent sites that are dominantly composed of one of the
-following vegetation types: chaparral shrubland, grassland, and riparian
-forest.
+We utilize shapefile that depict 5 specific sites in the Santa Clara River watershed that were collected by Dr. Christopher Kibler from the University of California, Santa Barbara. The shapefile contains polygons that represent sites that are dominantly composed of one of the following vegetation types: chaparral shrubland, grassland, and riparian forest.
 
 ### Results
 
-A summary figure from the analysis is shown below: ![Alt
-Text](https://github.com/kristinart/plant-phenology-santa-clara-river/blob/main/figures/seasonal_ndvi.png)
+A summary figure from the analysis is shown below: ![Alt Text](https://github.com/kristinart/plant-phenology-santa-clara-river/blob/main/figures/seasonal_ndvi.png)

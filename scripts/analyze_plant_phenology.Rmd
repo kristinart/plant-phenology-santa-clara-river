@@ -188,8 +188,8 @@ Lastly, we visualized the NDVI results for each site.
 sites_clean <- sites_annotated %>% 
   st_drop_geometry() %>% 
   select(-ID) %>% 
-  pivot_longer(!study_site, names_to = "name", values_to = "NDVI") %>%
-  mutate("date" = lubridate::as_date(gsub("X", "", name))) %>% 
+  pivot_longer(!study_site, names_to = "name", values_to = "ndvi") %>%
+  mutate(date = lubridate::as_date(gsub("X", "", name))) %>% 
   select(-name) %>% 
   as.data.frame() 
 
@@ -197,8 +197,8 @@ sites_clean <- sites_annotated %>%
 
 ```{r ndvi_plot, out.width="100%", fig.align = 'center', fig.cap = "**Figure 1: Seasonal cycles of vegetation productivity near the Santa Clara River.** Monthly NDVI values are shown between June 2018 and July 2019. Colors represent dominant vegetation type of five study sites."}
 ndvi_plot <- ggplot()+
-  geom_line(data = sites_clean, aes(x = date, y = NDVI, group = study_site, col = study_site), linewidth = 1.5)+
-  scale_color_manual(values = c("#824C71", "#474A2C", "#636940","#ABC4AB","#C97D60"))+
+  geom_line(data = sites_clean, aes(x = date, y = ndvi, group = study_site, col = study_site), linewidth = 1.5)+
+  scale_color_manual(values = c("#824C71", "#474A2C", "#636940","#ABC4AB","#C97D60"), labels = c("Chaparral", "Riparian Forest 1", "Riparian Forest 2", "Riparian Forest 3", "Grassland" ))+
   labs(x = "", y = "Normalized Difference Vegetation Index (NDVI)", 
        col = "Vegetation Type",
        title = "Seasonal cycles of vegetation productivity near the Santa Clara River")+
