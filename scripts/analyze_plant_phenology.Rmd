@@ -100,7 +100,7 @@ health of an ecosystem.
 
 *Satellite Imagery* 
 
-We utilize 8 pre-processed scenes of reflectance
+We utilized 8 pre-processed scenes of reflectance
 that were captured by the OLI sensor of the Landsat Operational Land
 Imager. The scenes include Level 2 surface reflectance products that
 contain bands 2-7. The scale factor was pre-set to 100 and erroneous
@@ -109,107 +109,108 @@ as part of the filename.
 
 *Study sites*
 
-We utilize shapefile that depict 5 specific sites in the Santa Clara River watershed that were collected by Dr. Christopher Kibler from the University of California, Santa Barbara. The shapefile contains polygons that represent sites that are dominantly composed of one of the following vegetation types: chaparral shrubland, grassland, and riparian forest. 
+We utilized shapefile that depict 5 specific sites in the Santa Clara River watershed that were collected by Dr. Christopher Kibler from the University of California, Santa Barbara. The shapefile contains polygons that represent sites that are dominantly composed of one of the following vegetation types: chaparral shrubland, grassland, and riparian forest. 
 
 #### Approach
-We began our analysis by converting raw reflectance data from 8 Landsat scenes into NDVI, a measure of vegetation productivity.
+We began our analysis by converting reflectance data from 8 Landsat scenes into NDVI, a measure of vegetation productivity.
 
 ```{r load ndvi data}
-#define function to calculate NDVI 
-calculate_ndvi <- function(nir, red){
-   ndvi = (nir - red)/ (nir + red)
+# define function to calculate NDVI
+calculate_ndvi <- function(nir, red) {
+  ndvi <- (nir - red) / (nir + red)
 }
 
-#load and process ndvi data
+# load and process ndvi data
 files <- list.files(here::here("data"), pattern = "*.tif", full.names = TRUE)
 
-#define function to load data and create ndvi layer
-create_ndvi_layer <- function(i){
+# define function to load data and create ndvi layer
+create_ndvi_layer <- function(i) {
   file <- files[i]
   landsat <- terra::rast(file)
   names(landsat) <- c("blue", "green", "red", "NIR", "SWIR1", "SWIR2")
-  ndvi <- lapp(landsat[[c(4,3)]], fun = calculate_ndvi)
+  ndvi <- lapp(landsat[[c(4, 3)]], fun = calculate_ndvi)
   return(ndvi)
 }
 
-#test function on 1 fie
+# test function on 1 fie
 test <- create_ndvi_layer(1)
-test 
+test
 
-#apply function to all files and stack layers
-all_ndvi <- c(create_ndvi_layer(1),
-              create_ndvi_layer(2),
-              create_ndvi_layer(3),
-              create_ndvi_layer(4),
-              create_ndvi_layer(5),
-              create_ndvi_layer(6),
-              create_ndvi_layer(7),
-              create_ndvi_layer(8)
-              )
+# apply function to all files and stack layers
+all_ndvi <- c(
+  create_ndvi_layer(1),
+  create_ndvi_layer(2),
+  create_ndvi_layer(3),
+  create_ndvi_layer(4),
+  create_ndvi_layer(5),
+  create_ndvi_layer(6),
+  create_ndvi_layer(7),
+  create_ndvi_layer(8)
+)
 
 # update layer names to match dates
-names(all_ndvi) <- c("2018-06-12",
-                     "2018-08-15",
-                     "2018-10-18",
-                     "2018-11-03",
-                     "2019-01-22",
-                     "2019-02-23",
-                     "2019-04-12",
-                     "2019-07-01"
-                     )
+names(all_ndvi) <- c(
+  "2018-06-12",
+  "2018-08-15",
+  "2018-10-18",
+  "2018-11-03",
+  "2019-01-22",
+  "2019-02-23",
+  "2019-04-12",
+  "2019-07-01"
+)
 
-all_ndvi 
-
+all_ndvi
 ```
 
 Next, we calculated the NDVI at each of the 5 study sites for each monthly scene. The monthly values were calculated by finding the mean NDVI value of all raster cells included in each study site. 
 ```{r load sites}
-#load sites data
+# load sites data
 sites <- st_read(here::here("data/study_sites.shp"))
 
-#plot study sites on a single NDVI layer
-tm_shape(all_ndvi[[1]])+
-  tm_raster()+
-  tm_shape(sites)+
+# plot study sites on a single NDVI layer
+tm_shape(all_ndvi[[1]]) +
+  tm_raster() +
+  tm_shape(sites) +
   tm_polygons()
 ```
 
 ```{r extract ndvi at sites}
-#extract the mean ndvi of cells in each study sites
-sites_ndvi <- terra::extract(all_ndvi, sites, fun = "mean") 
+# extract the mean ndvi of cells in each study sites
+sites_ndvi <- terra::extract(all_ndvi, sites, fun = "mean")
 
-#bind to original sites data to include attributes 
+# bind to original sites data to include attributes
 sites_annotated <- cbind(sites, sites_ndvi)
-sites_annotated 
+sites_annotated
 ```
 
 Lastly, we visualized the NDVI results for each site.
 ```{r clean results}
-sites_clean <- sites_annotated %>% 
-  st_drop_geometry() %>% 
-  select(-ID) %>% 
+sites_clean <- sites_annotated %>%
+  st_drop_geometry() %>%
+  select(-ID) %>%
   pivot_longer(!study_site, names_to = "name", values_to = "ndvi") %>%
-  mutate(date = lubridate::as_date(gsub("X", "", name))) %>% 
-  select(-name) %>% 
-  as.data.frame() 
-
+  mutate(date = lubridate::as_date(gsub("X", "", name))) %>%
+  select(-name) %>%
+  as.data.frame()
 ```
 
 ```{r ndvi_plot, out.width="100%", fig.align = 'center', fig.cap = "**Figure 1: Seasonal cycles of vegetation productivity near the Santa Clara River.** Monthly NDVI values are shown between June 2018 and July 2019. Colors represent dominant vegetation type of five study sites."}
-ndvi_plot <- ggplot()+
-  geom_line(data = sites_clean, aes(x = date, y = ndvi, group = study_site, col = study_site), linewidth = 1.5)+
-  scale_color_manual(values = c("#824C71", "#474A2C", "#636940","#ABC4AB","#C97D60"), labels = c("Chaparral", "Riparian Forest 1", "Riparian Forest 2", "Riparian Forest 3", "Grassland" ))+
-  labs(x = "", y = "Normalized Difference Vegetation Index (NDVI)", 
-       col = "Vegetation Type",
-       title = "Seasonal cycles of vegetation productivity near the Santa Clara River")+
-  theme_bw()+
+ndvi_plot <- ggplot() +
+  geom_line(data = sites_clean, aes(x = date, y = ndvi, group = study_site, col = study_site), linewidth = 1.5) +
+  scale_color_manual(values = c("#824C71", "#474A2C", "#636940", "#ABC4AB", "#C97D60"), labels = c("Chaparral", "Riparian Forest 1", "Riparian Forest 2", "Riparian Forest 3", "Grassland")) +
+  labs(
+    x = "", y = "Normalized Difference Vegetation Index (NDVI)",
+    col = "Vegetation Type",
+    title = "Seasonal cycles of vegetation productivity near the Santa Clara River"
+  ) +
+  theme_bw() +
   theme(plot.title = element_text(size = 12, hjust = 0))
 
 ndvi_plot
 
-#save figure
+# save figure
 ggsave("figures/seasonal_ndvi.png", ndvi_plot, width = 8, height = 6, units = "in")
-
 ```
 
 We found that chaparral, riparian forest, and grassland vegetation communities all employ different phenological strategies (Figure 1). 
@@ -219,4 +220,3 @@ Chaparral shrublands exhibited a relatively high and stable NDVI throughout the 
 Riparian forests exhibited distinctive seasonal dynamics in NDVI, with a higher NDVI in the summer relative to the winter. This indicates a winter deciduous phenology strategy where the vegetation (e.g., cottonwood and willow trees) lose their leaves in the winter and grow new leaves in the spring in response to changes in temperature, water availability, and light conditions.
 
 Grasslands exhibited distinctive seasonal dynamics in NDVI as well, with a lower NDVI in the summer and a higher NDVI in the winter. This indicates a drought deciduous phenology strategy, where the vegetation loses its leaves in the summer when moisture availability is low. 
-
