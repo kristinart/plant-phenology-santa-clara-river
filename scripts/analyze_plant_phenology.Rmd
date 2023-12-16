@@ -128,7 +128,7 @@ create_ndvi_layer <- function(i) {
   file <- files[i]
   landsat <- terra::rast(file)
   names(landsat) <- c("blue", "green", "red", "NIR", "SWIR1", "SWIR2")
-  ndvi <- lapp(landsat[[c(4, 3)]], fun = calculate_ndvi)
+  ndvi <- terra::lapp(landsat[[c(4, 3)]], fun = calculate_ndvi)
   return(ndvi)
 }
 
